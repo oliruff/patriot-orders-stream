@@ -48,11 +48,21 @@ export const fetchExecutiveOrders = async () => {
     'proclamation',
     'presidential_order',
     'other'
-  ].join(',');
+  ];
 
-  const response = await fetch(
-    `${FEDERAL_REGISTER_API}/documents.json?conditions[type]=PRESDOCU&conditions[president]=donald-trump&conditions[presidential_document_type][]=${documentTypes}&conditions[publication_date][gte]=2025-01-01&order=newest`
-  );
+  // Create the URL with properly formatted document type parameters
+  const url = new URL(`${FEDERAL_REGISTER_API}/documents.json`);
+  url.searchParams.append('conditions[type]', 'PRESDOCU');
+  url.searchParams.append('conditions[president]', 'donald-trump');
+  url.searchParams.append('conditions[publication_date][gte]', '2025-01-01');
+  url.searchParams.append('order', 'newest');
+  
+  // Add each document type as a separate parameter
+  documentTypes.forEach(type => {
+    url.searchParams.append('conditions[presidential_document_type][]', type);
+  });
+
+  const response = await fetch(url.toString());
   
   if (!response.ok) {
     throw new Error('Failed to fetch executive orders');
