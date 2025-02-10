@@ -7,9 +7,10 @@ interface OrderCardProps {
   date: string;
   summary: string;
   isNew?: boolean;
+  url?: string;
 }
 
-const OrderCard = ({ title, date, summary, isNew }: OrderCardProps) => {
+const OrderCard = ({ title, date, summary, isNew, url }: OrderCardProps) => {
   return (
     <Card className="w-full p-6 bg-white hover:shadow-lg transition-all duration-300 border border-gray-200 rounded-xl animate-fade-up">
       <div className="flex items-start justify-between mb-4">
@@ -27,9 +28,14 @@ const OrderCard = ({ title, date, summary, isNew }: OrderCardProps) => {
       </div>
       <p className="text-gray-600 mb-4 line-clamp-3">{summary}</p>
       <div className="flex items-center justify-between">
-        <button className="text-patriot-blue hover:text-patriot-blue/80 font-medium transition-colors">
+        <a 
+          href={url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-patriot-blue hover:text-patriot-blue/80 font-medium transition-colors"
+        >
           Read More →
-        </button>
+        </a>
       </div>
     </Card>
   );
