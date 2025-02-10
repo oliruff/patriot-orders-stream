@@ -26,7 +26,9 @@ const OrderCard = ({ title, date, summary, isNew, url }: OrderCardProps) => {
           </h3>
         </div>
       </div>
-      <p className="text-gray-600 mb-4 line-clamp-3">{summary}</p>
+      <p className="text-gray-600 mb-4 prose prose-sm">
+        {summary}
+      </p>
       <div className="flex items-center justify-between">
         <a 
           href={url} 
@@ -34,7 +36,7 @@ const OrderCard = ({ title, date, summary, isNew, url }: OrderCardProps) => {
           rel="noopener noreferrer" 
           className="text-patriot-blue hover:text-patriot-blue/80 font-medium transition-colors"
         >
-          Read More →
+          Read Full Order →
         </a>
       </div>
     </Card>
