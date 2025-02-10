@@ -8,6 +8,7 @@ interface ExecutiveOrder {
   document_number: string;
   html_url: string;
   abstract: string;
+  presidential_document_type: string;
 }
 
 interface FederalRegisterResponse {
@@ -39,8 +40,18 @@ const generateSummary = (abstract: string): string => {
 };
 
 export const fetchExecutiveOrders = async () => {
+  const documentTypes = [
+    'determination',
+    'executive_order',
+    'memorandum',
+    'notice',
+    'proclamation',
+    'presidential_order',
+    'other'
+  ].join(',');
+
   const response = await fetch(
-    `${FEDERAL_REGISTER_API}/documents.json?conditions[type]=PRESDOCU&conditions[president]=donald-trump&order=newest`
+    `${FEDERAL_REGISTER_API}/documents.json?conditions[type]=PRESDOCU&conditions[president]=donald-trump&conditions[presidential_document_type][]=${documentTypes}&conditions[publication_date][gte]=2025-01-01&order=newest`
   );
   
   if (!response.ok) {
@@ -54,6 +65,7 @@ export const fetchExecutiveOrders = async () => {
     date: new Date(order.publication_date).toLocaleDateString(),
     summary: generateSummary(order.abstract),
     url: order.html_url,
+    type: order.presidential_document_type,
     isNew: new Date(order.publication_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   }));
 };
