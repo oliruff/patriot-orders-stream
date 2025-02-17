@@ -42,6 +42,7 @@ const Index = () => {
                     summary={order.summary}
                     isNew={order.isNew}
                     url={order.url}
+                    type={order.type}
                   />
                 ))}
               </div>

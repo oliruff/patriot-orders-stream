@@ -8,9 +8,17 @@ interface OrderCardProps {
   summary: string;
   isNew?: boolean;
   url?: string;
+  type?: string;
 }
 
-const OrderCard = ({ title, date, summary, isNew, url }: OrderCardProps) => {
+const formatDocumentType = (type: string) => {
+  return type
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+const OrderCard = ({ title, date, summary, isNew, url, type }: OrderCardProps) => {
   return (
     <Card className="w-full p-6 bg-white hover:shadow-lg transition-all duration-300 border border-gray-200 rounded-xl animate-fade-up">
       <div className="flex items-start justify-between mb-4">
@@ -18,6 +26,11 @@ const OrderCard = ({ title, date, summary, isNew, url }: OrderCardProps) => {
           <div className="flex items-center gap-2 mb-2">
             {isNew && (
               <Badge className="bg-patriot-red text-white">New</Badge>
+            )}
+            {type && (
+              <Badge variant="secondary" className="capitalize">
+                {formatDocumentType(type)}
+              </Badge>
             )}
             <span className="text-sm text-gray-500">{date}</span>
           </div>
