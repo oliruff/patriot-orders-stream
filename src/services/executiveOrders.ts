@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 
 interface ExecutiveOrder {
@@ -19,24 +18,34 @@ interface FederalRegisterResponse {
 const FEDERAL_REGISTER_API = "https://www.federalregister.gov/api/v1";
 
 const generateSummary = (abstract: string): string => {
-  // If there's no abstract, provide a generic message
   if (!abstract) {
     return "This executive order addresses matters of federal policy and administration. Please refer to the full document for detailed information.";
   }
 
-  // Clean and format the abstract
+  // Clean HTML tags and extra whitespace
   const cleanAbstract = abstract
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/\s+/g, ' ')    // Remove extra whitespace
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
     .trim();
 
-  // If the abstract is too long, truncate it
-  const maxLength = 300;
-  if (cleanAbstract.length > maxLength) {
-    return cleanAbstract.substring(0, maxLength) + '...';
+  // Look for the Purpose section
+  const purposeMatch = cleanAbstract.match(/Purpose\.([\s\S]*?)(?=Section|Sec\.|$)/i);
+  if (purposeMatch && purposeMatch[1]) {
+    const purpose = purposeMatch[1].trim();
+    return purpose.length > 300 ? purpose.substring(0, 297) + '...' : purpose;
   }
 
-  return cleanAbstract;
+  // Look for the first section after "it is hereby ordered"
+  const orderedMatch = cleanAbstract.match(/it is hereby ordered:[\s\S]*?(?:Section|Sec\.)\s*\d+\.?([\s\S]*?)(?=(?:Section|Sec\.)\s*\d|$)/i);
+  if (orderedMatch && orderedMatch[1]) {
+    const firstSection = orderedMatch[1].trim();
+    return firstSection.length > 300 ? firstSection.substring(0, 297) + '...' : firstSection;
+  }
+
+  // If no specific sections found, use the first 300 characters
+  return cleanAbstract.length > 300 
+    ? cleanAbstract.substring(0, 297) + '...'
+    : cleanAbstract;
 };
 
 export const fetchExecutiveOrders = async () => {
